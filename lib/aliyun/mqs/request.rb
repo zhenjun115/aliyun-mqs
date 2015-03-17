@@ -65,8 +65,10 @@ module Aliyun::Mqs
       }.merge(mqs_headers).reject{|k,v| v.nil?}
       begin
         RestClient.send *[method, uri.to_s, body, headers].compact
-      rescue RestClient::Exception => ex
-        raise RequestException.new(ex)
+      rescue Exception => ex
+        # you can not just raise the exception here
+        # because, raising the ex will cause task break when there is no message in queues but the script still want to waite
+        puts ex.message
       end
     end
 
